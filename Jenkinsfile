@@ -43,6 +43,15 @@ pipeline {
                 archiveArtifacts artifacts: 'calculator.tar.gz', fingerprint: true
             }
         }
+        stage('Docker image') {
+            steps {
+                echo 'Building Docker image'
+                sh 'docker build -t ${APP_NAME}:${BUILD_NUMBER} .'
+                echo 'Running tests inside Docker container'
+                sh 'docker run --rm ${APP_NAME}:${BUILD_NUMBER}'
+                sh 'docker images ${APP_NAME}'
+            }
+        }
 
         stage('Deploy to Staging') {
             steps {
